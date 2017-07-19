@@ -15,19 +15,20 @@ type tree struct {
 	right *tree //包含自己的的指针类型
 }
 type result struct {
-	data string //最终的字符串
-	link string //连接符,默认为&
+	data   string //最终的字符串
+	symbol string //连接符,默认为&
 }
 
+//排序方式是按照字母a-z序
 //必须接收指针,第二的参数决定用什么tag来排序,第三个参数是决定连接符,默认是&
 func Sort(st interface{}, args ... string) (string) {
 	var tagKey = "json"
-	var result = result{data: "", link: "&"}
+	var result = result{data: "", symbol: "&"}
 	if len(args) > 0 {
 		tagKey = args[0]
 	}
 	if len(args) > 1 {
-		result.link = args[1]
+		result.symbol = args[1]
 	}
 
 	val := reflect.ValueOf(st)
@@ -47,6 +48,39 @@ func Sort(st interface{}, args ... string) (string) {
 	return join(&result, root).data
 }
 
+//排序是按照field的先后顺序
+//必须接收指针,第二的参数决定用什么tag来排序,第三个参数是决定连接符,默认是&
+func NoSort(st interface{}, args ... string) (string) {
+	var tagKey = "json"
+	var symbol = "&"
+	if len(args) > 0 {
+		tagKey = args[0]
+	}
+	if len(args) > 1 {
+		symbol = args[1]
+	}
+
+	val := reflect.ValueOf(st)
+	ind := reflect.Indirect(val)
+	if val.Kind() != reflect.Ptr {
+		panic(fmt.Errorf("The struct paramer must be use ptr"))
+	}
+	ty := ind.Type()
+	var result string
+	for i := 0; i < ty.NumField(); i++ {
+		name := ty.Field(i).Tag.Get(tagKey)
+		value := getValue(ind.Field(i))
+		if name != "" && value != "" {
+			//root = add(root, name, value)
+			if result != "" {
+				result += symbol
+			}
+			result += name + "=" + value
+		}
+	}
+	return result
+}
+
 //得到数据类型
 func getValue(value reflect.Value) string {
 	switch value.Kind() {
@@ -64,7 +98,7 @@ func join(result *result, t *tree) *result {
 		if result.data == "" {
 			result.data += t.name + "=" + t.value
 		} else {
-			result.data += result.link + t.name + "=" + t.value
+			result.data += result.symbol + t.name + "=" + t.value
 		}
 		result = join(result, t.right)
 	}

@@ -23,8 +23,22 @@ type UnifyOrderReq struct {
 }
 
 func TestSort(t *testing.T) {
-	var yourReq UnifyOrderReq
+	yourReq := getData()
 	AppSecret := "12345678910111213141516171819202"
+	pp := Sort(yourReq, "sort") + "&key=" + AppSecret
+	log.Println(pp)
+}
+
+func TestNoSort(t *testing.T) {
+	yourReq := getData()
+	AppSecret := "12345678910111213141516171819202"
+	pp := NoSort(yourReq, "sort") + "&key=" + AppSecret
+	log.Println(pp)
+}
+
+
+func getData() interface{} {
+	var yourReq UnifyOrderReq
 	yourReq.Appid = "wxxxxxxxxxxxxxxxxx" //微信开放平台我们创建出来的app的app id
 	yourReq.Body = "shangpinmiaoshu"
 	yourReq.Mch_id = "1111111111" //商户号
@@ -33,11 +47,9 @@ func TestSort(t *testing.T) {
 	yourReq.Trade_type = "NATIVE"
 	yourReq.Trade_type = "JSAPI"
 	yourReq.Spbill_create_ip = "0.0.0.0"
-	yourReq.Total_fee = 1                           //单位是分，这里是1毛钱
-
+	yourReq.Total_fee = 1 //单位是分，这里是1毛钱
 	currentTime := time.Now().UnixNano()
 	r := rand.New(rand.NewSource(currentTime))
 	yourReq.Out_trade_no = strconv.Itoa(int(currentTime)) + strconv.Itoa(r.Intn(1000000)) //后台系统单号
-	pp := Sort(&yourReq, "sort") + "&key=" + AppSecret
-	log.Println(pp)
+	return &yourReq
 }
