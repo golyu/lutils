@@ -6,15 +6,15 @@
  
 ```go
 type UnifyOrderReq struct {
+	Nonce_str        string `sort:"nonce_str"`
 	Appid            string `sort:"appid"`
 	Body             string `sort:"body"`
-	Mch_id           string `sort:"mch_id"`
-	Nonce_str        string `sort:"nonce_str"`
-	Notify_url       string `sort:"notify_url"`
 	Trade_type       string `sort:"trade_type"`
-	Spbill_create_ip string `sort:"spbill_create_ip"`
 	Total_fee        int    `sort:"total_fee"`
+	Mch_id           string `sort:"mch_id"`
+	Notify_url       string `sort:"notify_url"`
 	Out_trade_no     string `sort:"out_trade_no"`
+	Spbill_create_ip string `sort:"spbill_create_ip"`
 	Sign             string `sort:"sign"`
 }
 
@@ -41,22 +41,41 @@ func TestSort(t *testing.T) {
 }
 
 ```
+输出结果
+```
+appid=wxxxxxxxxxxxxxxxxx&body=shangpinmiaoshu&mch_id=1111111111&nonce_str=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx&notify_url=http://www.baidu.com/&out_trade_no=1501735009014394202563796&spbill_create_ip=0.0.0.0&total_fee=1&trade_type=JSAPI&key=12345678910111213141516171819202
+```
+如果使用的是NoSort()方法,结果则是按照filed顺序排列
+```
+nonce_str=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx&appid=wxxxxxxxxxxxxxxxxx&body=shangpinmiaoshu&trade_type=JSAPI&total_fee=1&mch_id=1111111111&notify_url=http://www.baidu.com/&out_trade_no=1501735116528896644227487&spbill_create_ip=0.0.0.0&key=12345678910111213141516171819202
+```
 
-##### sql语句的生成工具
+##### 一个带Close功能的 WaitGroupPlus
 ```go
-func GetReportDataList(SiteId string, indexId string, sTime, eTime string) (uDatas []ReportFc, err error) {
-	sql, err := sqlBuilder.Select("表名").
-		Where_(indexId, "index_id").
-		Where_(sTime, "day_time>=").
-		Where_(eTime, "day_time<=").
-		Where_(SiteId, "site_id").String()
-	if err != nil {
-		return
-	}
-	o := orm.NewOrm()
-	o.Using("xxx")
-	_, err = o.Raw(sql).QueryRows(&uDatas)
-	return
-}
+func main() {
+	fmt.Println(wgF())
+	//var wg sync.WaitGroup
+	//wg.Add(1)
+	//wg.Wait()
+	select {
+	case <-time.After(1<<63 - 1):
 
+	}
+}
+func wgF() string {
+	var wg = lutils.WaitGroupPlus{}
+	wg.Add(13)
+	go func() {
+		//<-time.After(3e9)
+		time.Sleep(2e9)
+		go func() {
+			defer wg.Close()
+			time.Sleep(4e9)
+			fmt.Println("马丹,这个线程还活着")
+		}()
+		wg.Done()
+	}()
+	wg.Wait()
+	return "沃日"
+}
 ```

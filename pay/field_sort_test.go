@@ -10,15 +10,15 @@ import (
 
 //首先定义一个UnifyOrderReq用于填入我们要传入的参数。
 type UnifyOrderReq struct {
+	Nonce_str        string `sort:"nonce_str"`
 	Appid            string `sort:"appid"`
 	Body             string `sort:"body"`
-	Mch_id           string `sort:"mch_id"`
-	Nonce_str        string `sort:"nonce_str"`
-	Notify_url       string `sort:"notify_url"`
 	Trade_type       string `sort:"trade_type"`
-	Spbill_create_ip string `sort:"spbill_create_ip"`
 	Total_fee        int    `sort:"total_fee"`
+	Mch_id           string `sort:"mch_id"`
+	Notify_url       string `sort:"notify_url"`
 	Out_trade_no     string `sort:"out_trade_no"`
+	Spbill_create_ip string `sort:"spbill_create_ip"`
 	Sign             string `sort:"sign"`
 }
 
