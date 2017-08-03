@@ -6,7 +6,7 @@ import "sync"
 type WaitGroupPlus struct {
 	wg    sync.WaitGroup
 	count int
-	sync.RWMutex
+	sync.Mutex
 }
 
 func (this *WaitGroupPlus) Add(delta int) {
