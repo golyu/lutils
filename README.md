@@ -71,11 +71,12 @@ func wgF() string {
 		go func() {
 			defer wg.Close()
 			time.Sleep(4e9)
-			fmt.Println("马丹,这个线程还活着")
+			fmt.Println("线程还活着")
 		}()
 		wg.Done()
 	}()
 	wg.Wait()
-	return "沃日"
+	return "exit"
 }
 ```
+##### 线程安全的err
