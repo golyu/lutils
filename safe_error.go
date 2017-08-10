@@ -7,13 +7,12 @@ type SafeErr struct {
 	sync.RWMutex
 }
 
-func NewSafeError(strs ...string) SafeErr {
+func NewSafeError(strs ...string) *SafeErr {
 	if len(strs) > 0 {
-		return SafeErr{str: strs[0]}
+		return &SafeErr{str: strs[0]}
 	}
-	return SafeErr{}
+	return &SafeErr{}
 }
-
 func (this *SafeErr) Error() string {
 	this.RLock()
 	defer this.RUnlock()
